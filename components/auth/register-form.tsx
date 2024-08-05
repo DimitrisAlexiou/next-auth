@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { FormError } from "../form-error"
+import { FormSuccess } from "../form-success"
 import { register } from "@/actions/register"
 
 export const RegisterForm = () => {
@@ -47,7 +48,7 @@ export const RegisterForm = () => {
             showSocial
         >
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(() => { })} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
                         <FormField
                             control={form.control}
@@ -101,7 +102,7 @@ export const RegisterForm = () => {
                             )} />
                     </div>
                     <FormError message={error} />
-                    <FormError message={success} />
+                    <FormSuccess message={success} />
                     <Button
                         type="submit"
                         className="w-full"
