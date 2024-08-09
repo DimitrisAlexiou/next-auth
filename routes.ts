@@ -14,6 +14,8 @@ export const authRoutes: string[] = [
 	'/auth/register',
 	'/auth/login',
 	'/auth/error',
+	'/auth/reset',
+	'/auth/new-password',
 ];
 
 /**

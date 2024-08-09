@@ -3,6 +3,7 @@ import authConfig from '@/auth.config';
 import { db } from '@/lib/db';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { getUserById } from './data/user';
+import { getTwoFactorConfirmationByUserId } from './data/two-factor-confirmation';
 
 declare module '@auth/core' {
 	interface Session {
@@ -39,6 +40,20 @@ export const {
 
 			// prevent sign in without email verification
 			if (!existingUser?.emailVerified) return false;
+
+			// two-factor authentication
+			if (existingUser.isTwoFactorEnabled) {
+				const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+					existingUser.id
+				);
+
+				if (!twoFactorConfirmation) return false;
+
+				// delete two factor confirmation for next sign in
+				await db.twoFactorConfirmation.delete({
+					where: { id: twoFactorConfirmation.id },
+				});
+			}
 
 			return true;
 		},
