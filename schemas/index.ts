@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { UserRole } from '@prisma/client';
 
 export const LoginSchema = z.object({
 	email: z.string().email({
@@ -14,10 +15,10 @@ export const RegisterSchema = z.object({
 	email: z.string().email({
 		message: 'Email is required',
 	}),
-	password: z.string().min(10, {
-		message: 'Minimum 10 characters required',
+	password: z.string().min(12, {
+		message: 'Minimum 12 characters required',
 	}),
-	// confirmPassword: z.string().min(10, {
+	// confirmPassword: z.string().min(12, {
 	// 	message: 'Passwords should match',
 	// }),
 	name: z.string().min(1, {
@@ -32,7 +33,39 @@ export const ResetSchema = z.object({
 });
 
 export const NewPasswordSchema = z.object({
-	password: z.string().min(10, {
-		message: 'Minimum of 10 characters required',
+	password: z.string().min(12, {
+		message: 'Minimum of 12 characters required',
 	}),
 });
+
+export const SettingsSchema = z
+	.object({
+		name: z.optional(z.string()),
+		isTwoFactorEnabled: z.optional(z.boolean()),
+		role: z.enum([UserRole.ADMIN, UserRole.USER]),
+		email: z.optional(z.string().email()),
+		password: z.optional(z.string().min(12)),
+		newPassword: z.optional(z.string().min(12)),
+	})
+	.refine(
+		(data) => {
+			if (data.password && !data.newPassword) return false;
+
+			return true;
+		},
+		{
+			message: 'New password is required!',
+			path: ['newPassword'],
+		}
+	)
+	.refine(
+		(data) => {
+			if (data.newPassword && !data.password) return false;
+
+			return true;
+		},
+		{
+			message: 'Password is required!',
+			path: ['password'],
+		}
+	);
