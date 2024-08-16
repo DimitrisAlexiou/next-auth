@@ -94,5 +94,7 @@ export const {
 	},
 	adapter: PrismaAdapter(db),
 	session: { strategy: 'jwt' },
+	secret: process.env.AUTH_SECRET,
+	debug: process.env.NODE_ENV !== 'production',
 	...authConfig,
 });

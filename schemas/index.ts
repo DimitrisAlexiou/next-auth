@@ -11,20 +11,25 @@ export const LoginSchema = z.object({
 	code: z.optional(z.string()),
 });
 
-export const RegisterSchema = z.object({
-	email: z.string().email({
-		message: 'Email is required',
-	}),
-	password: z.string().min(12, {
-		message: 'Minimum 12 characters required',
-	}),
-	// confirmPassword: z.string().min(12, {
-	// 	message: 'Passwords should match',
-	// }),
-	name: z.string().min(1, {
-		message: 'Name is required',
-	}),
-});
+export const RegisterSchema = z
+	.object({
+		email: z.string().email({
+			message: 'Email is required',
+		}),
+		password: z.string().min(12, {
+			message: 'Minimum 12 characters required',
+		}),
+		confirmPassword: z.string().min(12, {
+			message: 'Password confirmation is required',
+		}),
+		name: z.string().min(1, {
+			message: 'Name is required',
+		}),
+	})
+	.refine((data) => data.password === data.confirmPassword, {
+		path: ['confirmPassword'],
+		message: 'Passwords do not match',
+	});
 
 export const ResetSchema = z.object({
 	email: z.string().email({
